@@ -1,20 +1,27 @@
 <?php
 
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+//Домой
+Route::get('/', HomeController::class)->name("home");
 
-Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+//Аутентификация
+Route::controller(AuthController::class)->group(function () {
+    Route::get('/register', "register")->name("register");
+    Route::post('/register', "registerSubmit")->name("registerSubmit");
+
+    Route::get('/login', "login")->name("login");
+    Route::post('/login', "loginSubmit")->name("loginSubmit");
+
+    Route::post("/logout", "logOut")->name("logout");
 });
 
-require __DIR__.'/auth.php';
+Route::controller(TaskController::class)->group(function () {
+    Route::get('/profile', 'show')->name('profile');
+    Route::get('/task-add', 'addTask')->name('addTask');
+    Route::post('/task-save', 'saveTask')->name('saveTask');
+    Route::post('/remove-task/{id}', 'removeTask')->name('removeTask');
+});
